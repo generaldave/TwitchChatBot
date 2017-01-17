@@ -17,7 +17,7 @@
 SCREEN_RESOLUTION = (640, 480)
 SCREEN_WIDTH      = 0
 SCREEN_HEIGHT     = 1
-TITLE             = "Master Guns Bot"
+TITLE             = "Twitch Chat Bot"
 FPS               = 60
 
 ########################################################################
