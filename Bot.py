@@ -83,5 +83,3 @@ class Bot(object):
 
         ### DEBUG ###
         print ("Sent: " + tempMessage)
-
-bot = Bot()

@@ -15,6 +15,7 @@
 ########################################################################
 
 from   Constants import *   # Constants file
+from   Bot       import *   # Twitch Bot class
 import pygame               # For GUI
 
 ########################################################################
@@ -29,6 +30,9 @@ class init(object):
 
         # Set up GUI
         self.setupGUI()
+
+        # Initialize bot
+        self.bot = Bot()
 
         # Run app
         self.runApp()
