@@ -59,6 +59,7 @@ class init(object):
                 if event.type == pygame.QUIT:
                     running = False
 
+            # Listen for messages
             self.bot.listen()           
 
             # Update Screen

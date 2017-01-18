@@ -71,7 +71,7 @@ class Bot(object):
             output = user + ", such language. My virtual ears hurt."
         if (output):
             self.sendMessage(output)
-            self.app.chatBlock.displayMessage("mastergunsbot", output)            
+            self.app.chatBlock.displayMessage("mastergunsbot", output)
         
     def sendMessage(self, message):
         tempMessage = "PRIVMSG #" + CHANNEL + " :" + message
