@@ -17,6 +17,7 @@
 from   Constants import *   # Constants file
 from   Config    import *   # Config file
 from   socket    import *   # Sockets class
+from   Responder import *   # Responder class
 
 ########################################################################
 #                                                                      #
@@ -26,6 +27,7 @@ from   socket    import *   # Sockets class
 
 class Bot(object):
     appHint = "init.py"
+    
     def __init__(self, app: appHint) -> None:
         self.socket = socket()
         self.app    = app
@@ -41,7 +43,7 @@ class Bot(object):
         self.socket.send(("JOIN #" + CHANNEL + CARRIAGE_RETURN).encode("UTF-8"))
 
     # Method joins Twitch chat room
-    def joinRoom(self):
+    def joinRoom(self) -> None:
         readbuffer = ""
         
         loading = True
@@ -57,19 +59,19 @@ class Bot(object):
         self.sendMessage("reporting for duty.")
 
     # Method returns user name of a given input message
-    def getUser(self, line):
+    def getUser(self, line: str) -> None:
         separate = line.split(":", 2)
         user = separate[1].split("!", 1)[0]
         return user
 
     # Method returns the actual message of a given input message
-    def getMessage(self, line):
+    def getMessage(self, line: str) -> None:
         separate = line.split(":", 2)
         message = separate[2]
         return message.rstrip(CARRIAGE_RETURN)
 
     # Method listens for incoming messages from Twitch
-    def listen(self):
+    def listen(self) -> None:
         readbuffer = ""
         readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
         temp = readbuffer.split("\n")
@@ -85,22 +87,14 @@ class Bot(object):
             self.decideResponse(user, message)
 
     # Method decides if bot should respond and how to respond
-    def decideResponse(self, user, message):
-        message = message.lower()
-        output = ""
-        if (user == "generaldave" and message == "!quote"):
-            output = "Hello World"
-        elif (message == "you suck"):
-            output = user + ", you suck even more."
-        elif ("you suck" in message):
-            output = user + ", there will be no sucking around here."
-        elif ("hello" in message):
-            output = user + ", hello and welcome to my stream."
-        elif ([word for word in message.split(" ") if word in PROFANITY]):
-            output = user + ", such language. My virtual ears hurt."
-        if (output):
-            self.sendMessage(output)
-            self.app.chatBlock.displayMessage("mastergunsbot", output)
+    def decideResponse(self, user: str, message: str) -> None:
+        self.responder = Responder()
+        response = self.responder.decideResponse(user, message)
+        
+        # Only send a response if there is one
+        if (response):
+            self.sendMessage(response)
+            self.app.chatBlock.displayMessage("mastergunsbot", response)
 
     # Method sends message back to Twitch
     def sendMessage(self, message):
