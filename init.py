@@ -15,6 +15,7 @@
 ########################################################################
 
 from   Constants import *   # Constants file
+from   ChatBlock import *   # Chat Block class
 from   Bot       import *   # Twitch Bot class
 import pygame               # For GUI
 
@@ -32,10 +33,10 @@ class init(object):
         self.setupGUI()
 
         # Initialize bot
-        self.bot = Bot()
+        self.bot = Bot(self)
 
         # Run app
-        self.runApp()
+        self.runApp()        
 
     # Mehtod sets up GUI
     def setupGUI(self):
@@ -46,6 +47,9 @@ class init(object):
         self.clock = pygame.time.Clock()      # For frames per second
         self.mouse = pygame.mouse.get_pos()   # For mouse position
 
+        # Set up chat block
+        self.chatBlock = ChatBlock(self.screen)
+
     # Method runs app
     def runApp(self):
         running = True
@@ -53,7 +57,9 @@ class init(object):
             for event in pygame.event.get():
                 # Handle quit event
                 if event.type == pygame.QUIT:
-                    running = False            
+                    running = False
+
+            self.bot.listen()           
 
             # Update Screen
             pygame.display.update()

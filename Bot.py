@@ -3,12 +3,12 @@ from   Config    import HOST, PORT, PASS, NICK, CHANNEL
 from socket import *
 
 class Bot(object):
-    def __init__(self):
+    def __init__(self, app):
         self.socket = socket()
+        self.app    = app
 
         self.openSocket()
         self.joinRoom()
-        self.listen()
 
     def openSocket(self):
         self.socket.connect((HOST, PORT))
@@ -26,8 +26,6 @@ class Bot(object):
             readbuffer = temp.pop()
 
             for line in temp:
-                ### DEBUG ###
-                print (line)
                 if ("End of /NAMES list" in line):
                     loading = False
                     
@@ -45,41 +43,38 @@ class Bot(object):
 
     def listen(self):
         readbuffer = ""
-        while True:
-            readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
-            temp = readbuffer.split("\n")
-            readbuffer = temp.pop()
-            
-            for line in temp:
-                    print(line)
-                    if "PING" in line:
-                            s.send(line.replace("PING", "PONG"))
-                            break
-                    user = self.getUser(line)
-                    message = self.getMessage(line)
-                    print (user + ": " + message)
-                    self.decideResponse(user, message)
+        readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
+        temp = readbuffer.split("\n")
+        readbuffer = temp.pop()
+        
+        for line in temp:
+            if "PING" in line:
+                self.socket.send(line.replace("PING", "PONG"))
+                break
+            user    = self.getUser(line)
+            message = self.getMessage(line)
+            self.app.chatBlock.displayMessage(user, message)
+            self.decideResponse(user, message)
 
     def decideResponse(self, user, message):
         message = message.lower()
-        print (message)
         output = ""
         if (user == "generaldave" and message == "!quote"):
             output = "Hello World"
         elif (message == "you suck"):
-            output = "".join((user, ", you suck even more."))        
+            output = user + ", you suck even more."
         elif ("you suck" in message):
-            output = "".join((user + ", there will be no sucking around here."))
+            output = user + ", there will be no sucking around here."
         elif ("hello" in message):
-            output = "".join((user + ", hello and welcome to my stream."))
+            output = user + ", hello and welcome to my stream."
         elif ([word for word in message.split(" ") if word in PROFANITY]):
-            output = "".join((user + ", such language. My virtual ears hurt."))
+            output = user + ", such language. My virtual ears hurt."
         if (output):
             self.sendMessage(output)
+            self.app.chatBlock.displayMessage("mastergunsbot", output)            
         
     def sendMessage(self, message):
         tempMessage = "PRIVMSG #" + CHANNEL + " :" + message
         self.socket.send((tempMessage + CARRIAGE_RETURN).encode("UTF-8"))
 
-        ### DEBUG ###
-        print ("Sent: " + tempMessage)
+        print ("Sent:" + tempMessage)
