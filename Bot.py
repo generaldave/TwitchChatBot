@@ -28,10 +28,13 @@ from   Responder import *   # Responder class
 class Bot(object):
     appHint = "init.py"
     
-    def __init__(self, app: appHint) -> None:
-        self.socket = socket()
-        self.app    = app
+    def __init__(self, app: appHint, directory: str) -> None:
+        self.socket    = socket()
+        self.directory = directory
+        self.app       = app
 
+        self.responder = Responder(self.directory)
+        
         self.openSocket()
         self.joinRoom()
 
@@ -88,7 +91,6 @@ class Bot(object):
 
     # Method decides if bot should respond and how to respond
     def decideResponse(self, user: str, message: str) -> None:
-        self.responder = Responder()
         response = self.responder.decideResponse(user, message)
         
         # Only send a response if there is one

@@ -87,6 +87,8 @@ class ChatBlock(object):
 
             y = y + 20
 
-        if self.lineCount >= 21:
+        if self.lineCount > 22:
             self.index = self.index + 1
+            self.screen.fill(BACKGROUND[THEME])
+            self.update()
         self.fontColor = TEXT_COLOUR[THEME]

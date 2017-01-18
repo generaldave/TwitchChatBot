@@ -33,7 +33,7 @@ class init(object):
         self.setupGUI()
 
         # Initialize bot
-        self.bot = Bot(self)
+        self.bot = Bot(self, self.appDirectory)
 
         # Run app
         self.runApp()        
