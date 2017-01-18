@@ -14,9 +14,9 @@
 #                                                                      #
 ########################################################################
 
-from   Config    import NICK   # Config file
-from   Constants import *      # Constants file
-import pygame                  # For GUI
+from   Config    import *   # Config file
+from   Constants import *   # Constants file
+import pygame               # For GUI
 
 ########################################################################
 #                                                                      #
@@ -35,11 +35,11 @@ class ChatBlock(object):
 
         # Rectangle attributes
         self.rectangle = (10, 10, SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20)
-        self.rectangleColor = WHITE
+        self.rectangleColor = BLOCK[THEME]
 
         # Chat attributes
         self.font      = pygame.font.SysFont("Helvetica", 14)
-        self.fontColor = BLACK
+        self.fontColor = TEXT_COLOUR[THEME]
         self.y = 20
         self.lineCount = 0
         self.messages = []
@@ -62,7 +62,7 @@ class ChatBlock(object):
     def displayMessage(self, user: str, message: str) -> None:
         # If user is the bot, set colour to red to stand out
         if user == NICK:
-            self.fontColor = RED
+            self.fontColor = ADMIN_COLOUR[THEME]
 
         text = user + " : " + message
         length = len(text)
@@ -81,9 +81,7 @@ class ChatBlock(object):
         for i in range(self.index, len(self.messages)):
             text  = self.messages[i][0]
             color = self.messages[i][1]
-            self.chat = self.font.render(text, \
-                             True, \
-                             color)
+            self.chat = self.font.render(text, True, color)
             self.screen.blit(self.chat, (20, y))
             self.lineCount = self.lineCount + 1
 
@@ -91,4 +89,4 @@ class ChatBlock(object):
 
         if self.lineCount >= 21:
             self.index = self.index + 1
-        self.fontColor = BLACK
+        self.fontColor = TEXT_COLOUR[THEME]

@@ -52,13 +52,17 @@ class init(object):
 
     # Method runs app
     def runApp(self):
+        global THEME
         running = True
         while running:
-            self.screen.fill(BLACK)
+            self.screen.fill(BACKGROUND[THEME])
             for event in pygame.event.get():
                 # Handle quit event
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.MOUSEBUTTONDOWN and \
+                   event.button == RIGHTCLICK:                    
+                    THEME = STANDARD
 
             # Listen for messages
             self.bot.listen()
