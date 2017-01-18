@@ -15,10 +15,5 @@ The bot's chat window is very basic and I am working on theming it so it will lo
 
 In order for it to work you need to create a new file in the directory called Config.py and add these lines to it:
 
-from Constants import *
+![config](https://cloud.githubusercontent.com/assets/7481680/22081202/a36da14c-dd90-11e6-83ec-8b03fb042cfd.png)
 
-HOST    = "irc.twitch.tv"
-PORT    = 6667
-PASS    = "oauth: gotten from https://twitchapps.com/tmi"
-NICK    = "Twitch account name of bot"
-CHANNEL = "Channel name for bot to join"
