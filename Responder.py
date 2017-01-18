@@ -63,9 +63,11 @@ class Responder(object):
     def addQuote(self, user: str, message: str) -> str:
         try:
             index    = message.index(" ")
-            self.quotes.append(message[index + 1:])
-            response = user + ", \"" + message[index + 1:] + \
-                       "\" added to quotes."
+            text     = message[index + 1:]
+            self.quotes.append(text)
+            response = user + ", \"" + text + "\" added to quotes."
+            fileObj  = FileHandler(self.directory, "Quotes")
+            fileObj.write(self.quotes, "\n")
         except:
             response = user + ", that is not a valid quote."
 
