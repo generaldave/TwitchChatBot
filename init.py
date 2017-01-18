@@ -54,13 +54,17 @@ class init(object):
     def runApp(self):
         running = True
         while running:
+            self.screen.fill(BLACK)
             for event in pygame.event.get():
                 # Handle quit event
                 if event.type == pygame.QUIT:
                     running = False
 
             # Listen for messages
-            self.bot.listen()           
+            self.bot.listen()
+
+            # update chat block
+            self.chatBlock.update()
 
             # Update Screen
             pygame.display.update()

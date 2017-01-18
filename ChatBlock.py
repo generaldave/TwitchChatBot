@@ -1,84 +1,94 @@
-##from Button import *   # Button Class
-from Config import NICK
-from Constants import *
-import pygame   # For GUI
+########################################################################
+#                                                                      #
+# David Fuller                                                         #
+#                                                                      #
+# ChatBlock class: Chat window to capture Twitch chat                  #
+#                                                                      #
+# Created on 2016-1-18                                                 #
+#                                                                      #
+########################################################################
+
+########################################################################
+#                                                                      #
+#                          IMPORT STATEMENTS                           #
+#                                                                      #
+########################################################################
+
+from   Config    import NICK   # Config file
+from   Constants import *      # Constants file
+import pygame                  # For GUI
+
+########################################################################
+#                                                                      #
+#                            CHATBLCOK CLASS                           #
+#                                                                      #
+########################################################################
 
 # Chat block holds 22 lines. Each line after needs to move up 20px
 # And 46 characters wide
 
 class ChatBlock(object):
-    def __init__(self, screen):
+    screenHint = "A PyGame screen"
+    
+    def __init__(self, screen: screenHint) -> None:
         self.screen = screen   # Main screen
 
+        # Rectangle attributes
         self.rectangle = (10, 10, SCREEN_WIDTH - 20, SCREEN_HEIGHT - 20)
         self.rectangleColor = WHITE
 
+        # Chat attributes
         self.font      = pygame.font.SysFont("Helvetica", 14)
         self.fontColor = BLACK
-
         self.y = 20
-
-        self.messages = []
-
         self.lineCount = 0
+        self.messages = []
+        self.index = 0
 
+        # Set up rectangle
         self.setupRectangle()
 
-    def getLineCount(self):
+    # Method returns line count
+    def getLineCount(self) -> int:
         return self.lineCount
 
-    def setupRectangle(self):
+    # Method displays rectangle
+    def setupRectangle(self) -> None:
         self.chatRectangle = pygame.draw.rect(self.screen,         \
                                               self.rectangleColor, \
                                               self.rectangle)
 
-    def displayMessage(self, user, message):
+    # Method displays chat messages
+    def displayMessage(self, user: str, message: str) -> None:
+        # If user is the bot, set colour to red to stand out
         if user == NICK:
             self.fontColor = RED
 
-        lines = []
         text = user + " : " + message
         length = len(text)
-        if length <= 46:
-            
-            self.messages.append(text)
+        while length > 46:
+            self.messages.append((text[:46], self.fontColor))
+            text = text[46:]
+            length = len(text)
+        self.messages.append((text, self.fontColor))
+
+
+    # Method updates chat block
+    def update(self) -> None:
+        self.setupRectangle()
+        y = self.y
+        self.lineCount = 0
+        for i in range(self.index, len(self.messages)):
+            text  = self.messages[i][0]
+            color = self.messages[i][1]
             self.chat = self.font.render(text, \
                              True, \
-                             self.fontColor)
-            self.screen.blit(self.chat, (20, self.y))
+                             color)
+            self.screen.blit(self.chat, (20, y))
             self.lineCount = self.lineCount + 1
 
-            self.y = self.y + 20
+            y = y + 20
 
-        else:
-            lines.append(text[:46])
-            message = text[46:]
-            length = len(message)
-            text = lines[0]
-            self.messages.append(text)
-            self.chat = self.font.render(text, \
-                             True, \
-                             self.fontColor)
-            self.screen.blit(self.chat, (20, self.y))
-            self.lineCount = self.lineCount + 1
-
-            self.y = self.y + 20
-            
-            while length > 46:
-                lines.append(message[:46])
-                message = message[46:]
-                length = len(message)
-            lines.append(message)
-        if lines:
-            for i in range(1, len(lines)):
-                text = lines[i]
-                self.messages.append(text)
-                self.chat = self.font.render(text, \
-                                 True, \
-                                 self.fontColor)
-                self.screen.blit(self.chat, (20, self.y))
-                self.lineCount = self.lineCount + 1
-
-                self.y = self.y + 20
-
+        if self.lineCount >= 21:
+            self.index = self.index + 1
         self.fontColor = BLACK

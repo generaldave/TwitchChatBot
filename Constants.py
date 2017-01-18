@@ -46,6 +46,7 @@ RED   = (255, 0, 0)
 #                                                                      #
 ########################################################################
 
-PROFANITY       = ["ass", "fuck", "bitch", "hell", "damn", "dam"]
+PROFANITY       = ["ass", "fuck", "bitch", "hell", "damn", "dam",
+                   "shit"]
 CARRIAGE_RETURN = "\r\n"
 BUFFER          = 1024
