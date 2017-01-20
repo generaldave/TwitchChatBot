@@ -50,16 +50,17 @@ BLACK = (0, 0, 0)
 RED   = (255, 0, 0)
 
 # Path of Exile theme
-LIGHTGRAY  = (30, 31, 30)
+DARKGRAY  = (30, 31, 30)
 COPPER     = (163, 141, 109)
 GOLD       = (219, 159, 0)
 
 # Coding theme
-GREEN = (0, 255, 0)
-BLUE  = (0, 0, 255)
+GREEN     = (0, 200, 25)
+DARKBLUE  = (0, 0, 50)
 
 # Retro Gaming theme
-GRAY  = (200, 200, 200)
+BLUE       = (0, 50, 255)
+LIGHTGRAY  = (150, 150, 150)
 
 ########################################################################
 #                                                                      #
@@ -72,11 +73,11 @@ PATHOFEXILE  = 1
 CODING       = 2
 RETROGAMING  = 3
 
-#               Standard   Path of Exile   Coding   Retro Gaiming
-BACKGROUND   = [BLACK,     WHITE,          GREEN,   BLACK]
-BLOCK        = [WHITE,     LIGHTGRAY,      COPPER,  GRAY]
-ADMIN_COLOUR = [RED,       GOLD,           BLUE,    WHITE]
-TEXT_COLOUR  = [BLACK,     COPPER,         BLACK,   BLACK]
+#               Standard   Path of Exile   Coding       Retro Gaiming
+BACKGROUND   = [BLACK,     BLACK,          BLACK,       DARKGRAY]
+BLOCK        = [WHITE,     DARKGRAY,       DARKBLUE,    LIGHTGRAY]
+ADMIN_COLOUR = [RED,       GOLD,           GREEN,       BLUE]
+TEXT_COLOUR  = [BLACK,     COPPER,         WHITE,       WHITE]
 
 ########################################################################
 #                                                                      #
