@@ -26,12 +26,15 @@ import random                     # Random numbers class
 ########################################################################
 
 class Responder(object):
-    def __init__(self, directory: str) -> None:
+    appHint = "init.py"
+    
+    def __init__(self, app: appHint, directory: str) -> None:
+        self.app       = app
         self.directory = directory
         self.quotes    = []
         
         self.populateQuotes()
-        
+
     # Method decides whether a string can be an integer
     def tryInt(self, string: str) -> bool:
         try:
@@ -39,6 +42,29 @@ class Responder(object):
             return True
         except ValueError:
             return False
+
+    # Method decides theme value
+    def decideValue(self, value: str) -> int:
+        if value == "pathofexile":
+            return 1
+        elif value == "coding":
+            return 2
+        elif value == "retrogaming":
+            return 3
+        else:
+            return 0
+
+    # Method changes theme
+    def changeTheme(self, user: str, message: str) -> str:
+        message = message.split(" ")
+        theme = message[1]
+        theme = self.decideValue(theme)
+        if (self.tryInt(theme)):
+            self.app.setTheme(theme)
+            response = user + ", theme successfully changed."
+        else:
+            response = user + ", invalid theme."
+        return response
 
     # Method find random number if possible, otherwise state so
     def findRandom(self, user: str, message: str) -> str:
@@ -77,6 +103,11 @@ class Responder(object):
     def decideResponse(self, user: str, message: str) -> str:
         message = message.lower()
         response = ""
+
+        # Handles !theme
+        if user == "generaldave" and \
+           message.startswith("!theme"):
+            response = self.changeTheme(user, message)
 
         # Handles !random command
         if message.startswith("!random"):

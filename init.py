@@ -48,23 +48,30 @@ class init(object):
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()      # For frames per second
         self.mouse = pygame.mouse.get_pos()   # For mouse position
+        self.background = BACKGROUND[STANDARD]
 
         # Set up chat block
         self.chatBlock = ChatBlock(self.screen)
 
+    # Method sets app theme
+    def setTheme(self, theme: int) -> None:
+        self.chatBlock.setTheme(theme)
+        self.background = BACKGROUND[theme]
+
     # Method runs app
     def runApp(self):
-        global THEME
         running = True
         while running:
-            self.screen.fill(BACKGROUND[THEME])
+            self.screen.fill(self.background)
             for event in pygame.event.get():
                 # Handle quit event
                 if event.type == pygame.QUIT:
+                    self.bot.stop()
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN and \
                    event.button == RIGHTCLICK:                    
-                    THEME = STANDARD
+                    theme = STANDARD
+                    self.setTheme(theme)
 
             # update chat block
             self.chatBlock.update()

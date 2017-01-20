@@ -35,10 +35,15 @@ class Bot(Thread):
         self.directory = directory
         self.app       = app
 
-        self.responder = Responder(self.directory)
+        self.responder = Responder(self.app, self.directory)
+        self.listening = True
         
         self.openSocket()
         self.joinRoom()
+
+    # Method stops bot
+    def stop(self) -> None:
+        self.listening = False
 
     # Method opens bot's socket
     def openSocket(self) -> None:
@@ -79,15 +84,15 @@ class Bot(Thread):
 
     # Method listens for incoming messages from Twitch
     def run(self) -> None:
-        while True:
+        while self.listening:
             readbuffer = ""
             readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
             temp = readbuffer.split("\n")
             readbuffer = temp.pop()
             
-            for line in temp:
+            for line in temp:                
                 if "PING" in line:
-                    self.socket.send(line.replace("PING", "PONG"))
+                    self.socket.send(line.replace("PING", "PONG").encode("UTF-8"))
                     break
                 user    = self.getUser(line)
                 message = self.getMessage(line)
