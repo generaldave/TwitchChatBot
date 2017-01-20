@@ -14,10 +14,11 @@
 #                                                                      #
 ########################################################################
 
-from   Constants import *   # Constants file
-from   Config    import *   # Config file
-from   socket    import *   # Sockets class
-from   Responder import *   # Responder class
+from   Constants import *        # Constants file
+from   Config    import *        # Config file
+from   socket    import *        # Sockets class
+from   Responder import *        # Responder class
+from   threading import Thread   # For threading
 
 ########################################################################
 #                                                                      #
@@ -25,10 +26,11 @@ from   Responder import *   # Responder class
 #                                                                      #
 ########################################################################
 
-class Bot(object):
+class Bot(Thread):
     appHint = "init.py"
     
     def __init__(self, app: appHint, directory: str) -> None:
+        Thread.__init__(self)
         self.socket    = socket()
         self.directory = directory
         self.app       = app
@@ -60,6 +62,8 @@ class Bot(object):
                     loading = False
                     
         self.sendMessage("reporting for duty.")
+        message = "reporing for duty."
+        self.app.chatBlock.displayMessage(NICK, message)
 
     # Method returns user name of a given input message
     def getUser(self, line: str) -> None:
@@ -74,20 +78,21 @@ class Bot(object):
         return message.rstrip(CARRIAGE_RETURN)
 
     # Method listens for incoming messages from Twitch
-    def listen(self) -> None:
-        readbuffer = ""
-        readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
-        temp = readbuffer.split("\n")
-        readbuffer = temp.pop()
-        
-        for line in temp:
-            if "PING" in line:
-                self.socket.send(line.replace("PING", "PONG"))
-                break
-            user    = self.getUser(line)
-            message = self.getMessage(line)
-            self.app.chatBlock.displayMessage(user, message)
-            self.decideResponse(user, message)
+    def run(self) -> None:
+        while True:
+            readbuffer = ""
+            readbuffer = readbuffer + self.socket.recv(BUFFER).decode("UTF-8")
+            temp = readbuffer.split("\n")
+            readbuffer = temp.pop()
+            
+            for line in temp:
+                if "PING" in line:
+                    self.socket.send(line.replace("PING", "PONG"))
+                    break
+                user    = self.getUser(line)
+                message = self.getMessage(line)
+                self.app.chatBlock.displayMessage(user, message)
+                self.decideResponse(user, message)
 
     # Method decides if bot should respond and how to respond
     def decideResponse(self, user: str, message: str) -> None:

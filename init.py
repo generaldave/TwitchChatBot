@@ -18,6 +18,7 @@ from   Constants import *   # Constants file
 from   ChatBlock import *   # Chat Block class
 from   Bot       import *   # Twitch Bot class
 import pygame               # For GUI
+import time
 
 ########################################################################
 #                                                                      #
@@ -34,6 +35,7 @@ class init(object):
 
         # Initialize bot
         self.bot = Bot(self, self.appDirectory)
+        self.bot.start()
 
         # Run app
         self.runApp()        
@@ -63,9 +65,6 @@ class init(object):
                 if event.type == pygame.MOUSEBUTTONDOWN and \
                    event.button == RIGHTCLICK:                    
                     THEME = STANDARD
-
-            # Listen for messages
-            self.bot.listen()
 
             # update chat block
             self.chatBlock.update()
