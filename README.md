@@ -5,13 +5,11 @@ Twitch Chat Bot
 
 This is a Twitch Chat Bot in progress.
 
-So far it will connect to my chat, respond to a couple phrases, and react to a few commands.
+I am designing this to be able to handle the entire panel in one app. It handles the webcam, splits, controller visualizer, a little banner area, the chat bot, and there will be a game server eventually.
 
-It also keeps track of messages in its own window.
+Still working on the splits section. Need to write the games for gameserver. Also, need to work on word wrapping instead of character, in the chat bot.
 
-![screenshot](https://cloud.githubusercontent.com/assets/7481680/22080952/91aa7530-dd8f-11e6-928c-06934891857e.png)
-
-The bot's chat window is very basic and I am working on theming it so it will look nicer. I also need to work on word wrapping instead of letter wrapping.
+![twtichbot](https://cloud.githubusercontent.com/assets/7481680/22803861/aa1e58d2-eee4-11e6-9595-4cfd598fc58f.png)
 
 In order for it to work you need to create a new file in the directory called Config.py and add these lines to it:
 
