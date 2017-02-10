@@ -34,6 +34,7 @@ class Splits(object):
         self.directory = directory
 
         # Data members
+        self.game    = None
         self.overall = None
         self.splits  = []
         self.timing  = False
@@ -71,7 +72,7 @@ class Splits(object):
 
         # Attempts
         attemptsText = self.font.render("Attempts: " + \
-                                        self.splits[0].getAttempts(), \
+                                        self.attempts, \
                                         0, self.adminFont)
         self.screen.blit(attemptsText, (83, 222))
 
@@ -80,7 +81,7 @@ class Splits(object):
             img         = pygame.image.load(split.getImage())
             labelText   = self.font.render(split.getLabel(),   \
                                            0, self.normalFont)            
-            averageText = self.font.render(split.getAverage(), \
+            averageText = self.font.render(split.getBest(), \
                                            0, self.normalFont)
 
             self.screen.blit(img, (imgX, imgY))
@@ -101,6 +102,10 @@ class Splits(object):
                     self.timing = True
                     self.overall.startTimer()
                 else:
+                    timer = self.splits[self.index].getTimer(False)
+                    best  = self.splits[self.index].getBest()
+                    if (timer < best or best == "00:00"):
+                        self.splits[self.index].setBest(timer)
                     self.splits[self.index].stopTimer()
                     self.index = self.index + 1
                 self.splits[self.index].startTimer()
@@ -110,6 +115,8 @@ class Splits(object):
 
     # Method handles resetting of timer
     def resetTimer(self) -> None:
+        self.attempts = "%03d" % (int(self.attempts) + 1)
+        self.storeSplits()
         self.overall = None
         self.splits  = []
         self.timing  = False
@@ -119,13 +126,13 @@ class Splits(object):
 
     # Method chooses game
     def chooseGame(self) -> None:
-        game = LOST_LEVELS
-        self.populateSplits(LOST_LEVELS)
+        self.game = LOST_LEVELS
+        self.populateSplits()
 
     # Method sets up splits
-    def populateSplits(self, game: int) -> None:
+    def populateSplits(self) -> None:
         path = self.directory + "/files/splits/"
-        if game == LOST_LEVELS:
+        if self.game == LOST_LEVELS:
             file = "lostlevels"
         fileObj = FileHandler(path, file)
         splitsArray = fileObj.read()
@@ -133,8 +140,8 @@ class Splits(object):
         tokenizer.setString(splitsArray)
 
         # Number of attemtps
-        token    = tokenizer.getToken()
-        attempts = token
+        token         = tokenizer.getToken()
+        self.attempts = token
 
         # Splits information
         while not tokenizer.atEnd():
@@ -154,12 +161,29 @@ class Splits(object):
 
             # Append split
             split = Split(self.screen, self.directory)
-            split.setupSplit(attempts, image, label, average, game)
+            split.setupSplit(image, label, average, self.game)
             self.splits.append(split)
 
     # Method rewrites splits to file
     def storeSplits(self) -> None:
-        tne = 1
+        tempSplits = []        
+        path       = self.directory + "/files/splits/"
+        
+        if self.game == LOST_LEVELS:
+            file = "lostlevels"
+            
+        fileObj = FileHandler(path, file)
+        
+        tempSplits.append(self.attempts)  
+        for split in self.splits:
+            img = split.getImage()
+            index = img.rindex("/")
+            img = img[index + 1:]
+            tempSplits.append(img              + "," + \
+                              split.getLabel() + "," + \
+                              split.getBest())
+        
+        fileObj.append(tempSplits, "\n")
 
     # Method updates splits block
     def update(self) -> None:

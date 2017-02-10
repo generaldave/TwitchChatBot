@@ -33,17 +33,12 @@ class Split(object):
         self.fileDirectory = directory + "/files/splits/"
 
         # Data memebers
-        self.attempts = None
-        self.image    = None
-        self.label    = None
-        self.average  = None
-        self.game     = None
-        self.timer    = None
-        self.start    = None
-
-    # Method returns attempts
-    def getAttempts(self) -> str:
-        return self.attempts
+        self.image = None
+        self.label = None
+        self.best  = None
+        self.game  = None
+        self.timer = None
+        self.start = None
 
     # Method returns image
     def getImage(self) -> str:
@@ -54,19 +49,22 @@ class Split(object):
         return self.label
 
     # Method returns average
-    def getAverage(self) -> str:
-        return self.average
+    def getBest(self) -> str:
+        return self.best
+
+    # Method sets new best
+    def setBest(self, value) -> None:
+        self.best = value
 
     # Method sets up a split
-    def setupSplit(self, attempts: str, image: str, label: str, \
-                   average: str, game: int) -> None :
+    def setupSplit(self, image: str, label: str, \
+                   best: str, game: int) -> None :
         if game == LOST_LEVELS:
             folder = "lostlevels/"
-        self.attempts = attempts
-        self.image    = self.imgDirectory + folder + image
-        self.label    = label
-        self.average  = average
-        self.game     = game
+        self.image = self.imgDirectory + folder + image
+        self.label = label
+        self.best  = best
+        self.game  = game
 
     # Mehtod starts timer
     def startTimer(self) -> None:
@@ -89,13 +87,8 @@ class Split(object):
     def stopTimer(self) -> None:
         self.start = None
 
-    # Method displays split
-    def display(self) -> None:
-        ten = 1
-
     # Method handles toString
     def __str__(self):
-        return "Attempts: " + self.attempts + "\n" + \
-               "Image: "    + self.image    + "\n" + \
-               "Label: "    + self.label    + "\n" + \
-               "Average: "  + self.average
+        return "Image: " + self.image    + "\n" + \
+               "Label: " + self.label    + "\n" + \
+               "Best: "  + self.best
