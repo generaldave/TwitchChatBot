@@ -84,20 +84,26 @@ class App(object):
             for event in pygame.event.get():
                 
                 # Handle quit event
-                if event.type == pygame.QUIT:
+                if (event.type == pygame.QUIT):
                     self.bot.stop()
                     self.cam.close()
                     running = False
 
                 # Handle right click event
-                if event.type == pygame.MOUSEBUTTONDOWN and \
-                   event.button == RIGHTCLICK:                    
+                if (event.type == pygame.MOUSEBUTTONDOWN and \
+                   event.button == RIGHTCLICK):
                     theme = STANDARD
                     self.setTheme(theme)
+
+                # Handle g button - reset timer
+                if (event.type == pygame.KEYDOWN and \
+                    event.key == pygame.K_g):
+                    self.splits.resetTimer()
 
                 # Handle joystick button presses
                 if (event.type == pygame.JOYBUTTONDOWN):
                     self.visualizer.buttonPressed(event.button)
+                    self.splits.buttonPressed(event.button)
 
                 # Handle joystick button releases
                 if (event.type == pygame.JOYBUTTONUP):

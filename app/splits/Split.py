@@ -15,6 +15,7 @@
 ########################################################################
 
 from   .Constants import *   # Constants file
+import datetime              # For timer
 import pygame                # For GUI
 
 ########################################################################
@@ -67,9 +68,26 @@ class Split(object):
         self.average  = average
         self.game     = game
 
-    # Mehtod handles timer - start, stop, new
-    def handleTimer(self) -> None:
-        ten = 1
+    # Mehtod starts timer
+    def startTimer(self) -> None:
+        self.start = datetime.datetime.now()
+        self.timer = str(datetime.datetime.now() - self.start)
+
+    # Method returns timer
+    def getTimer(self, full: bool) -> str:
+        if self.timer and self.start:
+            if full:
+                self.timer = str(datetime.datetime.now() - self.start)
+            else:
+                self.timer = datetime.datetime.now() - self.start
+                hours, remainder = divmod(self.timer.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                self.timer = "%02d" % minutes + ":" + "%02d" % seconds
+        return self.timer
+
+    # Method stops timer
+    def stopTimer(self) -> None:
+        self.start = None
 
     # Method displays split
     def display(self) -> None:

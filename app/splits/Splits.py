@@ -34,15 +34,15 @@ class Splits(object):
         self.directory = directory
 
         # Data members
-        self.splits = []    
+        self.overall = None
+        self.splits  = []
+        self.timing  = False
+        self.index   = 0
 
         # Attributes
         self.goodSplit = COLOUR['GREEN']
         self.badSplit  = COLOUR['RED']
-        self.rectangle = (10, 220, 200, 420)
-
-        ##### DEBUG #####
-        self.start = datetime.datetime.now()
+        self.rectangle = (10, 220, 200, 420)        
 
         # Set up
         self.setTheme(STANDARD)
@@ -79,24 +79,43 @@ class Splits(object):
         for split in self.splits:
             img         = pygame.image.load(split.getImage())
             labelText   = self.font.render(split.getLabel(),   \
-                                           0, self.normalFont)
-            timerText   = self.font.render(split.getAverage(), \
-                                           0, self.adminFont)
+                                           0, self.normalFont)            
             averageText = self.font.render(split.getAverage(), \
                                            0, self.normalFont)
 
             self.screen.blit(img, (imgX, imgY))
-            self.screen.blit(labelText, (labelX, textY))
-            self.screen.blit(timerText, (95, textY))
+            self.screen.blit(labelText, (labelX, textY))            
             self.screen.blit(averageText, (averageX, textY))
 
             imgY  = imgY  + 30
             textY = textY + 30
 
-        # Overall
-        now = str(datetime.datetime.now() - self.start)
-        overallText = self.font.render(now, 0, self.adminFont)
-        self.screen.blit(overallText, (48, 605))
+        if not self.overall:
+            self.overall = Split(self.screen, self.directory)
+
+    # Method handles button press - if Select start/stop split timers
+    def buttonPressed(self, button: int):
+        if button == SELECT:
+            if self.index < len(self.splits) - 1:
+                if not self.timing:
+                    self.timing = True
+                    self.overall.startTimer()
+                else:
+                    self.splits[self.index].stopTimer()
+                    self.index = self.index + 1
+                self.splits[self.index].startTimer()
+            else:
+                self.overall.stopTimer()
+                self.splits[self.index].stopTimer()
+
+    # Method handles resetting of timer
+    def resetTimer(self) -> None:
+        self.overall = None
+        self.splits  = []
+        self.timing  = False
+        self.index   = 0
+        self.chooseGame()
+        self.setupGUI()
 
     # Method chooses game
     def chooseGame(self) -> None:
@@ -138,6 +157,27 @@ class Splits(object):
             split.setupSplit(attempts, image, label, average, game)
             self.splits.append(split)
 
+    # Method rewrites splits to file
+    def storeSplits(self) -> None:
+        tne = 1
+
     # Method updates splits block
     def update(self) -> None:
         self.setupGUI()
+        # Timer
+        timerX   = 95
+        timerY   = 244
+        for split in self.splits:
+            if split.getTimer(False):                
+                timerText = self.font.render(split.getTimer(False), \
+                                             0, self.adminFont)
+                self.screen.blit(timerText, (timerX, timerY))
+                timerY = timerY + 30
+
+        # Overall
+        overallText = self.font.render(self.overall.getTimer(True), \
+                                       0, self.adminFont)
+        self.screen.blit(overallText, (48, 605))
+        
+
+    
