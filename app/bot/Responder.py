@@ -66,6 +66,20 @@ class Responder(object):
             response = user + ", invalid theme."
         return response
 
+    # Method changes YouTube
+    def changeYoutube(self, user: str, message: str) -> str:
+        try:
+            message = message.split(" ")
+            youtube = message[1]
+            if youtube == "on":
+                self.app.setYoutube(True)
+            elif youtube == "off":
+                self.app.setYoutube(False)
+            else:
+                return user + ", " + "invalid command."
+        except:
+            return user + ", " + "try the format: !youtube <on, off>."
+
     # Method decides 8 ball response
     def eightBall(self, user: str, message: str) -> str:
         try:
@@ -124,17 +138,22 @@ class Responder(object):
 
         chars = [".", ",", "!"]
 
-        # Handles !theme command
-        if user == "generaldave" and \
-           message.startswith("!theme"):
-            response = self.changeTheme(user, message)
+        # Handles Admin commands
+        if user == "generaldave":
+            # !theme
+            if message.startswith("!theme"):           
+                response = self.changeTheme(user, message)
+
+            # !youtube
+            elif message.startswith("!youtube"):
+                response = self.changeYoutube(user, message)
 
         # Handles !8ball command
-        if message.startswith("!8ball"):
+        elif message.startswith("!8ball"):
             response = self.eightBall(user, message)
 
         # Handles !random command
-        if message.startswith("!random"):
+        elif message.startswith("!random"):
             response = self.findRandom(user, message)
 
         # Handles !quote command

@@ -24,9 +24,6 @@ import pygame                   # For GUI
 #                                                                      #
 ########################################################################
 
-# Chat block holds 20 lines. Each line after needs to move up 20px
-# And 46 characters wide
-
 class ChatBlock(object):
     screenHint = "A PyGame screen"
     

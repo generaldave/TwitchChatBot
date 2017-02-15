@@ -22,6 +22,7 @@ from   .cam          import *   # Web cam package
 from   .splits       import *   # Splits package
 from   .gameserver   import *   # Game server package
 from   .info         import *   # Infom package
+from   .title        import *   # Title package - for YouTube only
 from   pygame.locals import *   # For Joystick listening
 import pygame                   # For GUI
 import time                     # For FPS
@@ -36,6 +37,8 @@ class App(object):
     def __init__(self, appDirectory : str):
         self.appDirectory = appDirectory
 
+        self.youtube = False   # Assume Twitch, not YouTube
+
         # Set up GUI
         self.setupGUI()
 
@@ -44,7 +47,7 @@ class App(object):
         self.bot.start()
 
         # Run app
-        self.runApp()        
+        self.runApp()   
 
     # Mehtod sets up GUI
     def setupGUI(self):
@@ -64,6 +67,7 @@ class App(object):
         self.splits     = Splits(self.screen, self.appDirectory)
         self.gameserver = GameServer(self.screen, self.appDirectory)
         self.info       = Info(self.screen, self.appDirectory)
+        self.title      = Title(self.screen, self.appDirectory)
 
     # Method sets app theme
     def setTheme(self, theme: int) -> None:
@@ -74,10 +78,15 @@ class App(object):
         self.splits.setTheme(theme)
         self.gameserver.setTheme(theme)
         self.info.setTheme(theme)
+        self.title.setTheme(theme)
         self.background = BACKGROUND[theme]
 
+    # Method changes whether or not for YouTube
+    def setYoutube(self, flag: bool) -> None:
+        self.youtube = flag
+
     # Method runs app
-    def runApp(self):
+    def runApp(self) -> None:
         running = True
         while running:
             self.screen.fill(self.background)
@@ -96,9 +105,11 @@ class App(object):
                     self.setTheme(theme)
 
                 # Handle g button - reset timer
-                if (event.type == pygame.KEYDOWN and \
-                    event.key == pygame.K_g):
-                    self.splits.resetTimer()
+                if (event.type == pygame.KEYDOWN):
+                    if (event.key == pygame.K_g):
+                        self.splits.resetTimer()
+                    if (event.key == pygame.K_h):
+                        self.splits.restartTimer()
 
                 # Handle joystick button presses
                 if (event.type == pygame.JOYBUTTONDOWN):
@@ -127,6 +138,9 @@ class App(object):
             self.splits.update()
             self.gameserver.update()
             self.info.update()
+
+            if (self.youtube):
+                self.title.update()
 
             # Update Screen
             pygame.display.update()
