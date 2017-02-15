@@ -34,11 +34,11 @@ class Splits(object):
         self.directory = directory
 
         # Data members
-        self.game    = None
-        self.overall = None
-        self.splits  = []
-        self.timing  = False
-        self.index   = 0
+        self.game        = None
+        self.overall     = None
+        self.splits      = []
+        self.timing      = False
+        self.index       = 0
 
         # Attributes
         self.goodSplit = COLOUR['GREEN']
@@ -55,6 +55,8 @@ class Splits(object):
         self.rectangleColor = BLOCK[theme]
         self.normalFont     = TEXT_COLOUR[theme]
         self.adminFont      = ADMIN_COLOUR[theme]
+        self.goodSplit      = COLOUR['GREEN']
+        self.badSplit       = COLOUR['RED']
 
     # Method sets up GUI
     def setupGUI(self) -> None:
@@ -94,6 +96,13 @@ class Splits(object):
         if not self.overall:
             self.overall = Split(self.screen, self.directory)
 
+    # Method sets font colour of split timers
+    def setColour(self) -> None:
+        if (self.timer < self.best):
+            self.splits[self.index].setColour(self.goodSplit)
+        elif (self.timer > self.best):
+            self.splits[self.index].setColour(self.badSplit)                  
+
     # Method handles button press - if Select start/stop split timers
     def buttonPressed(self, button: int):
         if button == SELECT:
@@ -102,25 +111,43 @@ class Splits(object):
                     self.timing = True
                     self.overall.startTimer()
                 else:
-                    timer = self.splits[self.index].getTimer(False)
-                    best  = self.splits[self.index].getBest()
-                    if (timer < best or best == "00:00"):
-                        self.splits[self.index].setBest(timer)
+                    self.timer = self.splits[self.index].getTimer(False)
+                    self.best  = self.splits[self.index].getBest()
+                    if (self.timer < self.best or self.best == "00:00"):
+                        self.splits[self.index].setBest(self.timer)
+                    self.setColour()
                     self.splits[self.index].stopTimer()
                     self.index = self.index + 1
                 self.splits[self.index].startTimer()
             else:
+                if (self.timer < self.best or self.best == "00:00"):
+                    self.splits[self.index].setBest(self.timer)
+                overallTimer = self.overall.getTimer(True)
+                if (overallTimer < self.overallBest):
+                    self.overallBest = overallTimer
+                self.setColour()
                 self.overall.stopTimer()
                 self.splits[self.index].stopTimer()
+                self.storeSplits()
+
+    # Method sets defaults
+    def setDefaults(self) -> None:
+        self.overall = None
+        self.splits  = []
+        self.timing  = False
+        self.index   = 0
+
+    # Method restarts timer
+    def restartTimer(self) -> None:
+        self.setDefaults()
+        self.chooseGame()
+        self.setupGUI()
 
     # Method handles resetting of timer
     def resetTimer(self) -> None:
         self.attempts = "%03d" % (int(self.attempts) + 1)
         self.storeSplits()
-        self.overall = None
-        self.splits  = []
-        self.timing  = False
-        self.index   = 0
+        self.setDefaults()
         self.chooseGame()
         self.setupGUI()
 
@@ -143,6 +170,10 @@ class Splits(object):
         token         = tokenizer.getToken()
         self.attempts = token
 
+        # Overall best
+        token            = tokenizer.getToken()
+        self.overallBest = token
+
         # Splits information
         while not tokenizer.atEnd():
             token = tokenizer.getToken()
@@ -157,11 +188,12 @@ class Splits(object):
             label = token[:index]
 
             # Average
-            average = token[index + 1:]
+            best = token[index + 1:]
 
             # Append split
             split = Split(self.screen, self.directory)
-            split.setupSplit(image, label, average, self.game)
+            split.setupSplit(image, label, best, \
+                             self.adminFont, self.game)
             self.splits.append(split)
 
     # Method rewrites splits to file
@@ -174,7 +206,8 @@ class Splits(object):
             
         fileObj = FileHandler(path, file)
         
-        tempSplits.append(self.attempts)  
+        tempSplits.append(self.attempts)
+        tempSplits.append(self.overallBest)
         for split in self.splits:
             img = split.getImage()
             index = img.rindex("/")
@@ -192,16 +225,22 @@ class Splits(object):
         timerX   = 95
         timerY   = 244
         for split in self.splits:
-            if split.getTimer(False):                
-                timerText = self.font.render(split.getTimer(False), \
-                                             0, self.adminFont)
+            if split.getTimer(False):
+                colour = split.getColour()
+                timer  = split.getTimer(False)
+                best   = split.getBest()
+                timerText = self.font.render(timer, 0, colour)
                 self.screen.blit(timerText, (timerX, timerY))
                 timerY = timerY + 30
 
         # Overall
         overallText = self.font.render(self.overall.getTimer(True), \
                                        0, self.adminFont)
-        self.screen.blit(overallText, (48, 605))
+        self.screen.blit(overallText, (48, 598))
+
+        overallBestText = self.font.render(self.overallBest, \
+                                           0, self.normalFont)
+        self.screen.blit(overallBestText, (48, 616))
         
 
     

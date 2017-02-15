@@ -33,12 +33,13 @@ class Split(object):
         self.fileDirectory = directory + "/files/splits/"
 
         # Data memebers
-        self.image = None
-        self.label = None
-        self.best  = None
-        self.game  = None
-        self.timer = None
-        self.start = None
+        self.image  = None
+        self.label  = None
+        self.best   = None
+        self.game   = None
+        self.timer  = None
+        self.start  = None
+        self.colour = None
 
     # Method returns image
     def getImage(self) -> str:
@@ -52,19 +53,29 @@ class Split(object):
     def getBest(self) -> str:
         return self.best
 
+    # Method returns colour
+    def getColour(self) -> (int, int, int):
+        return self.colour
+
+    # Method sets colour
+    def setColour(self, value: (int, int, int)) -> None:
+        self.colour = value
+
     # Method sets new best
     def setBest(self, value) -> None:
         self.best = value
 
     # Method sets up a split
     def setupSplit(self, image: str, label: str, \
-                   best: str, game: int) -> None :
+                   best: str, colour: (int, int, int), \
+                   game: int) -> None :
         if game == LOST_LEVELS:
             folder = "lostlevels/"
-        self.image = self.imgDirectory + folder + image
-        self.label = label
-        self.best  = best
-        self.game  = game
+        self.image  = self.imgDirectory + folder + image
+        self.label  = label
+        self.best   = best
+        self.colour = colour
+        self.game   = game
 
     # Mehtod starts timer
     def startTimer(self) -> None:
