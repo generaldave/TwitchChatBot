@@ -9,7 +9,7 @@ I am designing this to be able to handle the entire panel in one app. It handles
 
 Still working on the splits section. Need to write the games for gameserver. Also, need to work on word wrapping instead of character, in the chat bot.
 
-![twtichbot](https://cloud.githubusercontent.com/assets/7481680/22803861/aa1e58d2-eee4-11e6-9595-4cfd598fc58f.png)
+![lostlevelsattempt15](https://cloud.githubusercontent.com/assets/7481680/23135109/47a267c8-f765-11e6-84e2-8d147b8fd84c.png)
 
 In order for it to work you need to create a new file in the app/bot/ directory called Config.py and add these lines to it:
 
